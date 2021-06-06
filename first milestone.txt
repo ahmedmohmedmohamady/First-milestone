@@ -10,6 +10,9 @@
 //functions proto type
 void sw1_greenled_init(void);//function to initialize port F
 void greenled_on(void);//function to turn the green LED on when distance is>100
+void delay_ms(int n);
+void delay_us(int n);
+void LCD_Cmd(unsigned char command);
 
 
 
@@ -36,7 +39,38 @@ while(1){
 GPIO_PORTF_DATA_R = 0x08;}
 }}
 
+void LCD_Cmd(unsigned char command){
 
+    GPIO_PORTA_DATA_R &= ~0xE0; // RS,R/W => 0  TO SELECT COMMAND AND WRITE
+    GPIO_PORTB_DATA_R  = command;  // put command in the data
+    GPIO_PORTA_DATA_R |= 0x80;  // Enable is set
+    delay_us(0);
+    GPIO_PORTA_DATA_R &= ~0xE0;
+	if (command < 4){
+	delay_ms(2); // command 1 and 2 needs up to 1.64ms //
+	}		
+	else{
+	delay_us(40); /* all others 40 us */
+} 
+}
+
+
+int i,j;
+void delay_ms(int n){
+
+for(i=0;i<n;i++){
+for(j=0;j<3180;j++)
+{}
+}
+}
+ 
+void delay_us(int n){
+
+for(i=0;i<n;i++){
+for(j=0;j<3;j++)
+{}
+}
+}
 
 
 
