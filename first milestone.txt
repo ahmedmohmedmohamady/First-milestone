@@ -34,6 +34,9 @@ SYSCTL_RCGCGPIO_R |= 0x20; /* enable clock to GPIOF */
 GPIO_PORTF_DIR_R = 0x08; /* set PORTF3 pin as output (LED) pin */
 GPIO_PORTF_DEN_R = 0x18; /* set PORTF pins 4-3 as digital pins */
 GPIO_PORTF_PUR_R = 0x10; /* enable pull up for pin 4 */
+GPIO_PORTF_AMSEL_R = 0x00;        // disable analog on PortF
+GPIO_PORTF_AFSEL_R = 0x00;        //disable alt funct on Port (F7-0)
+GPIO_PORTF_PCTL_R = 0
 }
 
 void greenled_on(void){
