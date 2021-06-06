@@ -1,0 +1,43 @@
+//header files needed in entire project
+#include "tm4c123gh6pm.h"
+#include <stdlib.h>
+#include <math.h>
+#define pi 3.14159265358979323846
+#include <stdio.h>
+#include <inttypes.h>
+#include <string.h>
+
+//functions proto type
+void sw1_greenled_init(void);//function to initialize port F
+void greenled_on(void);//function to turn the green LED on when distance is>100
+
+
+
+
+
+//main functions
+int main(void){
+sw1_greenled_init();
+
+
+}
+
+
+void sw1_greenled_init(void){
+SYSCTL_RCGCGPIO_R |= 0x20; /* enable clock to GPIOF */
+GPIO_PORTF_DIR_R = 0x08; /* set PORTF3 pin as output (LED) pin */
+GPIO_PORTF_DEN_R = 0x18; /* set PORTF pins 4-3 as digital pins */
+GPIO_PORTF_PUR_R = 0x10; /* enable pull up for pin 4 */
+}
+
+void greenled_on(void){
+if(distancee>100){
+while(1){
+GPIO_PORTF_DATA_R = 0x08;}
+}}
+
+
+
+
+
+
