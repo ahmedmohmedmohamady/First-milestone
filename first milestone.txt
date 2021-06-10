@@ -15,7 +15,7 @@ void delay_us(int n);
 void LCD_Cmd(unsigned char command);
 void LCD_Data(unsigned char data);
 void LCD_String (char *str);
-void LCD_double (double display);
+void LCD_int (int n);
 void LCD_init(void);
 double distance(double lat1, double lon1, double lat2, double lon2, char unit);//calculate the distance by knowing the lon&lat of both points
 double deg2rad(double deg);
@@ -160,10 +160,15 @@ void LCD_String (char *str)	// Send string to LCD function
 		LCD_Data(str[i]);   //Call LCD data write 
 	}
 }
-void LCD_double (double display){
-char final_result[10];
-	sprintf(final_result, "%f", display);
-	LCD_String (final_result);
+void LCD_int (int n){
+ int h,t,u;  // hundreds,tens,units
+
+    u=n%10;
+    t=(n/10)%10;
+    h=(n/100)%10;
+    LCD_Data(h+'0');
+    LCD_Data(t+'0');
+   LCD_Data(u+'0');
 
 
 }
