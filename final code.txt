@@ -18,10 +18,13 @@ void LCD_Data(unsigned char data);
 void LCD_String (char *str);
 void LCD_int (int n);
 void LCD_init(void);
-double distance(double lat1, double lon1, double lat2, double lon2, char unit);//calculate the distance by knowing the lon&lat of both points
+int distance(double lat1, double lon1, double lat2, double lon2, char unit);//calculate the distance by knowing the lon&lat of both points
 double deg2rad(double deg);
 double rad2deg(double rad);
-double distancee ;
+char Uart5_receive(void);
+int distancee ;
+char size='m';//to get the distance in meter
+double latt1=0.0,lonn1=0.0,latt2=0.0,lonn2=0.0;
 
 
 
@@ -90,7 +93,7 @@ double distance(double lat1, double lon1, double lat2, double lon2, char unit) {
         dist = dist * 0.8684;
         break;
     }
-    return (dist);
+    return  (int)(dist);
   }
 }
 
@@ -191,9 +194,9 @@ void LCD_Cmd(unsigned char command){
 }
 
 
-int i,j;
-void delay_ms(int n){
 
+void delay_ms(int n){
+int i,j;
 for(i=0;i<n;i++){
 for(j=0;j<3180;j++)
 {}
@@ -201,7 +204,7 @@ for(j=0;j<3180;j++)
 }
  
 void delay_us(int n){
-
+int i,j;
 for(i=0;i<n;i++){
 for(j=0;j<3;j++)
 {}
@@ -211,6 +214,11 @@ unsigned char SW1_value(void){
 
    return GPIO_PORTF_DATA_R&0x10;
 
+}
+
+char Uart5_receive(void){
+while((UART5_FR_R & 0x10) != 0);
+return (char)(UART5_DR_R & 0xFF);
 }
 
 
