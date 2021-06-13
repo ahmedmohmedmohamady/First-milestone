@@ -8,10 +8,10 @@
 #include <string.h>
 
 //functions proto type
-void sw1_greenled_init(void);//function to initialize port F
+void sw1_redled_init(void);//function to initialize port F
 unsigned char SW1_value(void);
-void greenled_on(void);//function to turn the green LED on when distance is>100
-void led_on(void);//function to turn the green LED on
+void redled_on(void);//function to turn the red LED on when distance is>100
+void led_on(void);//function to turn the red LED on
 void delay_ms(int n);
 void delay_us(int n);
 void LCD_Cmd(unsigned char command);
@@ -22,6 +22,7 @@ void LCD_init(void);
 void distance(void);//calculate the distance by knowing the lon&lat of both points
 double deg2rad(double deg);
 double rad2deg(double rad);
+void GPS_init(void);
 void readGPSModule(void);
 char Uart5_receive(void);
 int distancee ;
@@ -34,7 +35,7 @@ double latt1=0.0,lonn1=0.0,latt2=0.0,lonn2=0.0;
 int main(void){
 
 
-sw1_greenled_init();
+sw1_redled_init();
 LCD_init();
 GPS_init();
 
@@ -48,7 +49,7 @@ GPS_init();
              LCD_String("Distance=");
              LCD_int(distancee);
              delay_ms(100);
-             greenled_on(void)
+             redled_on(void)
                    }
 
 
@@ -57,27 +58,27 @@ GPS_init();
 }
 
 
-void sw1_greenled_init(void){
+void sw1_redled_init(void){
 SYSCTL_RCGCGPIO_R |= 0x20; /* enable clock to GPIOF */
 while((SYSCTL_PRGPIO_R & 0x020) == 0){} ;
-GPIO_PORTF_DIR_R = 0x08; /* set PORTF3 pin as output (LED) pin */
-GPIO_PORTF_DEN_R = 0x18; /* set PORTF pins 4-3 as digital pins */
+GPIO_PORTF_DIR_R = 0x02; /* set PORTF1 pin as output (LED) pin */
+GPIO_PORTF_DEN_R = 0x12; /* set PORTF pins 4-1 as digital pins */
 GPIO_PORTF_PUR_R = 0x10; /* enable pull up for pin 4 */
 GPIO_PORTF_AMSEL_R = 0x00;        // disable analog on PortF
 GPIO_PORTF_AFSEL_R = 0x00;        //disable alt funct on Port (F7-0)
 GPIO_PORTF_PCTL_R = 0;
 }
 
-void greenled_on(void){
+void redled_on(void){
 if(distancee>100){
 while(1){
-GPIO_PORTF_DATA_R = 0x08;}
+GPIO_PORTF_DATA_R = 0x02;}
 }}
 //led on whatever distance is
 void led_on(void){
 
 while(1){
-GPIO_PORTF_DATA_R = 0x08;}
+GPIO_PORTF_DATA_R = 0x02;}
 }
 
 
@@ -109,6 +110,27 @@ double deg2rad(double deg) {
 
 double rad2deg(double rad) {
   return (rad * 180 / pi);
+}
+
+//uart5 init function
+void GPS_init(void){
+SYSCTL_RCGCUART_R  |= 0x20;  /* enable clock to UART5 */
+    SYSCTL_RCGCGPIO_R |= 0x10;  /* enable clock to PORTE for PE4/Rx and RE5/Tx */
+    delay_ms(100);
+    /* UART5 initialization */
+    UART5_CTL_R = 0;         /* UART5 module disbable */
+    UART5_IBRD_R = 104;      /* for 9600 baud rate, integer = 104 */
+    UART5_FBRD_R = 11;       /* for 9600 baud rate, fractional = 11*/
+   // UART5_CC_R = 0;          /select system clock/
+    UART5_LCRH_R = 0x70;     /* data lenght 8-bit, not parity bit, enable FIFO */
+     UART5_CTL_R |= 0x301;     /* Enable UART5 module, Rx and Tx */
+
+    /* UART5 TX5 and RX5 use PE4 and PE5. Configure them digital and enable alternate function */
+    GPIO_PORTE_DEN_R |= 0x30;      /* set PE4 and PE5 as digital */
+    GPIO_PORTE_AFSEL_R |= 0x30;    /* Use PE4,PE5 alternate function */
+     GPIO_PORTE_AMSEL_R&= ~0x30;    /* Turn off analg function*/
+     GPIO_PORTE_PCTL_R= (GPIO_PORTE_PCTL_R&0xFF00FFFF)+0x00110000; /* configure PE4 and PE5 for UART */
+
 }
 
 void LCD_init(void){
