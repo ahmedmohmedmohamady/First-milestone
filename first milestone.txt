@@ -9,21 +9,44 @@
 
 //functions proto type
 void sw1_greenled_init(void);//function to initialize port F
+unsigned char SW1_value(void);
 void greenled_on(void);//function to turn the green LED on when distance is>100
 void delay_ms(int n);
 void delay_us(int n);
 void LCD_Cmd(unsigned char command);
 void LCD_Data(unsigned char data);
 void LCD_String (char *str);
-void LCD_double (double display);
+void LCD_int (int n);
 void LCD_init(void);
+double distance(double lat1, double lon1, double lat2, double lon2, char unit);//calculate the distance by knowing the lon&lat of both points
+double deg2rad(double deg);
+double rad2deg(double rad);
+double distancee ;
 
 
 
 
 //main functions
 int main(void){
+
 sw1_greenled_init();
+LCD_init();
+
+		while(1){
+			
+				LCD_Cmd(0x01); 
+				LCD_Cmd(0x80); 
+				delay_ms(500);
+				LCD_Data('t');
+				LCD_Data('o');
+				LCD_Data('t');
+				LCD_Data('a');
+				LCD_Data('l');
+			        
+				delay_ms(500);
+			
+			
+		}
 
 
 }
@@ -31,9 +54,13 @@ sw1_greenled_init();
 
 void sw1_greenled_init(void){
 SYSCTL_RCGCGPIO_R |= 0x20; /* enable clock to GPIOF */
+while((SYSCTL_PRGPIO_R & 0x020) == 0){} ;
 GPIO_PORTF_DIR_R = 0x08; /* set PORTF3 pin as output (LED) pin */
 GPIO_PORTF_DEN_R = 0x18; /* set PORTF pins 4-3 as digital pins */
 GPIO_PORTF_PUR_R = 0x10; /* enable pull up for pin 4 */
+GPIO_PORTF_AMSEL_R = 0x00;        // disable analog on PortF
+GPIO_PORTF_AFSEL_R = 0x00;        //disable alt funct on Port (F7-0)
+GPIO_PORTF_PCTL_R = 0;
 }
 
 void greenled_on(void){
@@ -135,10 +162,15 @@ void LCD_String (char *str)	// Send string to LCD function
 		LCD_Data(str[i]);   //Call LCD data write 
 	}
 }
-void LCD_double (double display){
-char final_result[10];
-	sprintf(final_result, "%f", display);
-	LCD_String (final_result);
+void LCD_int (int n){
+ int h,t,u;  // hundreds,tens,units
+
+    u=n%10;
+    t=(n/10)%10;
+    h=(n/100)%10;
+    LCD_Data(h+'0');
+    LCD_Data(t+'0');
+   LCD_Data(u+'0');
 
 
 }
@@ -175,7 +207,11 @@ for(j=0;j<3;j++)
 {}
 }
 }
+unsigned char SW1_value(void){
 
+   return GPIO_PORTF_DATA_R&0x10;
+
+}
 
 
 
