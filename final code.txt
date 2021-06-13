@@ -17,7 +17,7 @@ void delay_us(int n);
 void LCD_Cmd(unsigned char command);
 void LCD_Data(unsigned char data);
 void LCD_String (char *str);
-void LCD_int (int n);
+void LCD_int (int n);//function to display integer
 void LCD_init(void);
 int distance(double lat1, double lon1, double lat2, double lon2, char unit);//calculate the distance by knowing the lon&lat of both points
 double deg2rad(double deg);
@@ -25,7 +25,6 @@ double rad2deg(double rad);
 void readGPSModule(void);
 char Uart5_receive(void);
 int distancee ;
-char size='m';//to get the distance in meter
 double latt1=0.0,lonn1=0.0,latt2=0.0,lonn2=0.0;
 
 
@@ -34,25 +33,32 @@ double latt1=0.0,lonn1=0.0,latt2=0.0,lonn2=0.0;
 //main functions
 int main(void){
 
+
 sw1_greenled_init();
 LCD_init();
+GPS_init();
 
-		while(1){
-			
-				LCD_Cmd(0x01); 
-				LCD_Cmd(0x80); 
-				delay_ms(500);
-				LCD_Data('t');
-				LCD_Data('o');
-				LCD_Data('t');
-				LCD_Data('a');
-				LCD_Data('l');
-			        
-				delay_ms(500);
-			
-			
-		}
 
+        while(1){
+            readGPSModule();
+            distance();
+              LCD_Cmd(0x01);
+             LCD_Cmd(0x80);
+               delay_ms(100);
+             LCD_String("Distance=");
+             LCD_int(distancee);
+             delay_ms(100);
+
+
+               if(distancee>100){
+                           break;
+                       }
+
+
+        }
+
+     
+        led_on();
 
 }
 
@@ -83,8 +89,9 @@ GPIO_PORTF_DATA_R = 0x08;}
 
 int distance(double lat1, double lon1, double lat2, double lon2, char unit) {
   double theta, dist;
-  if ((lat1 == lat2) && (lon1 == lon2) {
-    return 0;
+    if ((lat2==0.0) || (lon2==0.0)) {
+      latt2=latt1;
+      lonn2=lonn1;
   }
   else {
     theta = lon1 - lon2;
@@ -102,8 +109,11 @@ int distance(double lat1, double lon1, double lat2, double lon2, char unit) {
         dist = dist * 0.8684;
         break;
     }
-    return  (int)(dist);
+    
   }
+ latt2=latt1;
+ lonn2=lonn1;
+return  (int)(dist);
 }
 
 
@@ -233,90 +243,93 @@ return (char)(UART5_DR_R & 0xFF);
 
 
 void readGPSModule(void){
-    char c0,GPSValues[100],parseValue[12][20],*token ;
-    double latitude=0.0,longitude=0.0,seconds=0.0,result=0.0,minutes=0.0;
-    const char comma[2] = ",";
-    int index=0,degrees;
+    uint8_t cons;
+    uint8_t i = 0;
+    double temp;
+    char* nothing;
+while(1){
+    cons = Uart5_receive();
+
+    if(cons == '$')
+    {
+        cons = Uart5_receive();
+        if(cons == 'G')
+        {
+            cons = Uart5_receive();
+            if(cons == 'P')
+            {
+                cons = Uart5_receive();
+                if(cons == 'G')
+                {
+                    cons = Uart5_receive();
+                    if(cons == 'L')
+                    {
+                        cons= Uart5_receive();
+                        if(cons == 'L')
+                        {
+                            cons= Uart5_receive(); /* For , */
+                            cons= Uart5_receive(); /* For 3 */
+                            cons= Uart5_receive(); /* For 0 */
+
+                            cons = Uart5_receive();
+                            while(cons != ',')
+                            {
+                                latitude[i] = cons;
+                                i++;
+                                cons = Uart5_receive();
+                            }
+                            latitude[i] = '\0';
+
+                           // latitude  calculations
+                            temp =strtod(latitude, &nothing);
+                            temp /= 60;
+                            temp += 30;
 
 
-    c0 = Uart5_receive();
-
-     //$GPRMC
-    if(c0=='$'){
-            char c1;
-
-        c1=Uart5_receive() ;
-        if(c1=='G'){
-                    char c2;
-
-              c2=Uart5_receive() ;
-            if(c2=='P'){
-                            char c3;
-
-                c3=Uart5_receive() ;
-                if(c3=='R'){
-                                    char c4;
-
-                     c4=Uart5_receive() ;
-                    if(c4=='M'){
-                                            char c5;
-
-                         c5=Uart5_receive() ;
-                        if(c5=='C'){
-                                                    char c6;
-
-                             c6=Uart5_receive() ;
-                            if(c6==','){
-                                                            char c7;
-
-                                 c7=Uart5_receive() ;
-
-
-                                while(c7!='*'){
-                                    GPSValues[index]=c7;
-
-                                    c7=Uart5_receive() ;
-                                    index++;}
-
-
-                                //to seprate the string
-                                index=0;
-                                token = strtok(GPSValues, comma);
-                                while( token != NULL ) {
-                                    strcpy(parseValue[index], token);
-                                    token = strtok(NULL, comma);
-                                    index++;}
-
-
-                                //geting the lat and lon
-                                if(strcmp(parseValue[1],"A")==0){
-
-                                                                latitude=atof(parseValue[2]);
-                                 longitude=atof(parseValue[4]);
-                                                                     //latitude calculations
-                                    degrees=latitude/100;
-                                    minutes=latitude-(double)(degrees*100);
-                                    seconds=minutes/60.00;
-                                    result=degrees+seconds;
-                                    latt1=result;
-
-                                    //longitude calculations
-                                    degrees=longitude/100;
-                                    minutes=longitude-(double)(degrees*100);
-                                    seconds=minutes/60.00;
-                                    result=degrees+seconds;
-                                   lonn1=result;
-
-
-                               
+                            cons =Uart5_receive(); /* for N */
+                            if(cons== 'S')
+                                {temp *= -1;}
+                                latt1=temp;
 
 
 
+                                cons= Uart5_receive(); /* for , */
+                                cons= Uart5_receive(); /* for 0 */
+                            while(cons == '0')
+                            {cons = Uart5_receive();/* for 3 */}
+                            cons = Uart5_receive(); /* for 1 */
 
-                                    }
+                            /* longitude calculations*/
+                            i=0;
+                            cons = Uart5_receive();
+                            while(cons!= ',')
+                            {
+                                longitude[i] = cons;
+                                i++;
+                                cons= Uart5_receive();
+                            }
+                            longitude[i] = '\0';
 
-                        }}}}}}}
+
+                            temp = strtod(longitude, &nothing);
+                            temp /= 60;
+                            temp += 31;
+                            cons= Uart5_receive(); /* for direction (E or W ) */
+                            if(cons== 'W')
+                            {temp *= -1;}
+                            lonn1=temp;
+
+
+                            break;}
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 }
+
 
 
 
