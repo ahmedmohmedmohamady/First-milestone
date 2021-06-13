@@ -11,6 +11,7 @@
 void sw1_greenled_init(void);//function to initialize port F
 unsigned char SW1_value(void);
 void greenled_on(void);//function to turn the green LED on when distance is>100
+void led_on(void);//function to turn the green LED on
 void delay_ms(int n);
 void delay_us(int n);
 void LCD_Cmd(unsigned char command);
@@ -72,6 +73,13 @@ if(distancee>100){
 while(1){
 GPIO_PORTF_DATA_R = 0x08;}
 }}
+//led on whatever distance is
+void led_on(void){
+
+while(1){
+GPIO_PORTF_DATA_R = 0x08;}
+}
+
 
 int distance(double lat1, double lon1, double lat2, double lon2, char unit) {
   double theta, dist;
