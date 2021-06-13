@@ -25,6 +25,7 @@ double rad2deg(double rad);
 void GPS_init(void);
 void readGPSModule(void);
 char Uart5_receive(void);
+char latitude[10],longitude[10];
 int distancee ;
 double latt1=0.0,lonn1=0.0,latt2=0.0,lonn2=0.0;
 
@@ -49,7 +50,7 @@ GPS_init();
              LCD_String("Distance=");
              LCD_int(distancee);
              delay_ms(100);
-             redled_on(void)
+             redled_on();
                    }
 
 
