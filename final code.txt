@@ -19,7 +19,7 @@ void LCD_Data(unsigned char data);
 void LCD_String (char *str);
 void LCD_int (int n);//function to display integer
 void LCD_init(void);
-int distance(double lat1, double lon1, double lat2, double lon2, char unit);//calculate the distance by knowing the lon&lat of both points
+void distance(void);//calculate the distance by knowing the lon&lat of both points
 double deg2rad(double deg);
 double rad2deg(double rad);
 void readGPSModule(void);
@@ -81,33 +81,23 @@ GPIO_PORTF_DATA_R = 0x08;}
 }
 
 
-int distance(double lat1, double lon1, double lat2, double lon2, char unit) {
-  double theta, dist;
-    if ((lat2==0.0) || (lon2==0.0)) {
-      latt2=latt1;
-      lonn2=lonn1;
-  }
-  else {
-    theta = lon1 - lon2;
-    dist = sin(deg2rad(lat1)) * sin(deg2rad(lat2)) + cos(deg2rad(lat1)) * cos(deg2rad(lat2)) * cos(deg2rad(theta));
-    dist = acos(dist);
-    dist = rad2deg(dist);
-    dist = dist * 60 * 1.1515;
-    switch(unit) {
-      case 'M':
-        break;
-      case 'm'://to get distance in meter
-        dist = dist * 1.609344*1000;
-        break;
-      case 'N':
-        dist = dist * 0.8684;
-        break;
-    }
-    
-  }
- latt2=latt1;
- lonn2=lonn1;
-return  (int)(dist);
+void distance(void){
+    if ((latt2==0.0) || (lonn2==0.0)) {
+          latt2=latt1;
+          lonn2=lonn1;
+      }
+      else {
+    double theta1 = deg2rad(latt1-latt2);
+    double  theta2 = deg2rad(lonn1-lonn2);
+    double a = sin(theta1/2)*sin(theta1/2) + cos(deg2rad(latt2))*cos(deg2rad(latt1))*sin(theta2/2)*sin(theta2/2);
+     a = 2*atan2(sqrt(a),sqrt(1-a));
+
+    double temp = (6371 * a)*1000;
+    if(temp<=20)
+        return;
+    distancee+=(int)temp;
+    latt2=latt1;
+     lonn2=lonn1;}
 }
 
 
