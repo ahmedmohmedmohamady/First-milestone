@@ -44,12 +44,20 @@ GPS_init();
         while(1){
             readGPSModule();
             distance();
+sprintf(longitude, "%.8f", lonn2);
+sprintf(latitude, "%.8f", latt2);
               LCD_Cmd(0x01);
              LCD_Cmd(0x80);
                delay_ms(100);
-             LCD_String("Distance=");
-             LCD_int(distancee);
+             LCD_String(longitude);
+              delay_ms(100);
+              LCD_Cmd(0xC0);
+             LCD_String(latitude);
              delay_ms(100);
+             LCD_Data(" ");
+             LCD_int(distancee);
+              delay_ms(100);
+             
              redled_on();
                    }
 

@@ -1,5 +1,5 @@
 # GPS Tracking system using Tiva-C Micro-Controller
-Code written in ```C++```
+Code written in ``` C ``` <br>
 Micro Controller **tm4c123gh6pm**
 ## We have made:<br>
 •  A function that initializes the ports of Tiva C microcontroller.<br>
