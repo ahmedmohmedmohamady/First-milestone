@@ -8,4 +8,4 @@ exceeds 100 meters.<br>
 •  A function that calculates the total taken distance<br>
 <br>
 First milestone WorKing LCD:: [Link](https://youtu.be/JOz43tDkkH4) <br>
-Final Project Vedio:: [Link]()
+Final Project Video:: [Link]()
