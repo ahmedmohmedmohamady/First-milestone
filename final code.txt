@@ -48,17 +48,11 @@ GPS_init();
              LCD_String("Distance=");
              LCD_int(distancee);
              delay_ms(100);
+             greenled_on(void)
+                   }
 
 
-               if(distancee>100){
-                           break;
-                       }
-
-
-        }
-
-     
-        led_on();
+              
 
 }
 
