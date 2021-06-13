@@ -7,5 +7,5 @@ exceeds 100 meters.<br>
 •  the function that will display the output distance on the LCD and test it by writing on them a dummy data.<br>
 •  A function that calculates the total taken distance<br>
 <br>
-First milestone WorKing LCD:: [Link](https://youtu.be/JOz43tDkkH4) 
+First milestone WorKing LCD:: [Link](https://youtu.be/JOz43tDkkH4) <br>
 Final Project Vedio:: [Link]()
