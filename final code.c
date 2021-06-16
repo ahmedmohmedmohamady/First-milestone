@@ -54,7 +54,7 @@ sprintf(latitude, "%.8f", latt2);
               LCD_Cmd(0xC0);
              LCD_String(latitude);
              delay_ms(100);
-             LCD_Data(" ");
+             LCD_Data(' ');
              LCD_int(distancee);
               delay_ms(100);
              
@@ -335,14 +335,14 @@ while(1){
                             lonn1=temp;
 
 
-                            break;}
+                            }
                         }
                     }
                 }
             }
         }
 
-    }
+    break;}
 }
 
 
